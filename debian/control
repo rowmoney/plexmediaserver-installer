@@ -1,0 +1,17 @@
+Source: plexmediaserver-installer
+Section: net
+XB-Plugin-Section: multimedia
+Priority: optional
+Maintainer: OpenMediaVault Plugin Developers <plugins@omv-extras.org>
+Build-Depends: debhelper (>= 9.0.0 )
+Standards-Version: 3.9.6
+
+Package: plexmediaserver-installer
+Architecture: armhf
+Depends: curl
+Description: Plex Media Server for Linux
+ Stream media everywhere(tm)
+ .
+ Plex Media Server simplifies your life by organizing all of your
+ personal media, making it beautiful and streaming it to all of
+ your devices.
