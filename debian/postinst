@@ -2,75 +2,11 @@
 
 PMS_LIB_DIR=/usr/lib/plexmediaserver
 PMS_DOWNLOAD_DIR=/tmp/plex_tmp_download
+PMS_DOWNLOAD_NAME="plexmediaserver.deb"
 
 VERSION="1.3.3.3148-b38628e"
-
-get_pms_build(){
-
-    local cpuinfo=$(grep -i features /proc/cpuinfo)
-    local cpuarch=$(grep -i architecture /proc/cpuinfo | cut -d' ' -f3 | head -n1)
-    if [[ $cpuinfo =~ .*neon.* ]] && [[ $cpuinfo =~ .*vfpv4.* ]] && [[ $cpuinfo =~ .*thumb.* ]] && [[ $cpuinfo =~ .*idiva.* ]]; then
-        echo "netgear"
-    elif [[ $cpuarch == "8" ]]; then
-        echo "netgear"
-    else
-        echo "synology"
-    fi
-}
-
-install_netgear(){
-
-    local PMS_URL='https://downloads.plex.tv/plex-media-server/${VERSION}/plexmediaserver-ros6-binaries-annapurna_${VERSION}_armel.deb'
-    local PMS_HASH='ece8e6aa07908255fb49990623d6f2f57973362b'
-
-    echo "Downloading readynas package ..."
-    cd $PMS_DOWNLOAD_DIR
-    curl --progress-bar -o readynas.deb $PMS_URL
-
-    local PMS_DOWNLOAD_HASH=`sha1sum readynas.deb | cut -d' ' -f1`
-
-    if [ "$PMS_HASH" != "$PMS_DOWNLOAD_HASH" ]
-    then
-        echo "Checksum mismatch. Downloaded file does not match this package."
-        exit 1
-    else
-        echo "Passed checksum test."
-    fi
-
-    echo "Extracting readynas.deb ..."
-        dpkg-deb --fsys-tarfile readynas.deb | tar -xf - -C $PMS_LIB_DIR/ --strip-components=4 ./apps/plexmediaserver-annapurna/Binaries
-
-    # remove not used files
-    rm $PMS_LIB_DIR/config.xml
-
-}
-
-install_synology(){
-
-    local PMS_URL='https://downloads.plex.tv/plex-media-server/${VERSION}/PlexMediaServer-${VERSION}-arm7.spk'
-    local PMS_HASH='a9ff63c3f5307104b8be6b6ebe2b01e391c45fe6'
-
-    echo "Downloading synology package ..."
-    cd $PMS_DOWNLOAD_DIR
-    curl --progress-bar -o synology.tar $PMS_URL
-
-    local PMS_DOWNLOAD_HASH=`sha1sum synology.tar | cut -d' ' -f1`
-
-    if [ "$PMS_HASH" != "$PMS_DOWNLOAD_HASH" ]
-    then
-        echo "Checksum mismatch. Downloaded file does not match this package."
-        exit 1
-    else
-        echo "Passed checksum test."
-    fi
-
-    echo "Extracting synology.tar ..."
-        tar -xOf synology.tar package.tgz | tar -xzf - -C $PMS_LIB_DIR/
-
-    # remove not used files
-    rm -r $PMS_LIB_DIR/dsm_config
-}
-
+PMS_URL="https://downloads.plex.tv/plex-media-server/${VERSION}/plexmediaserver-ros6-binaries-annapurna_${VERSION}_armel.deb"
+PMS_HASH="ece8e6aa07908255fb49990623d6f2f57973362b"
 
 case "$1" in
     configure)
@@ -82,13 +18,23 @@ case "$1" in
         mkdir -p "${PMS_DOWNLOAD_DIR}"
         mkdir -p "${PMS_LIB_DIR}"
 
-        pmsbuild=$(get_pms_build)
+        cd "${PMS_DOWNLOAD_DIR}"
+        curl --progress-bar -o ${PMS_DOWNLOAD_NAME} ${PMS_URL}
 
-        if [[ $pmsbuild == "netgear" ]]; then
-            install_netgear
+        PMS_DOWNLOAD_HASH=$(sha1sum ${PMS_DOWNLOAD_NAME} | cut -d' ' -f1)
+
+        if [ "${PMS_HASH}" != "${PMS_DOWNLOAD_HASH}" ]; then
+            echo "Checksum mismatch. Downloaded file does not match this package."
+            exit 1
         else
-            install_synology
+            echo "Passed checksum test."
         fi
+
+        echo "Extracting ${PMS_DOWNLOAD_NAME} ..."
+        dpkg-deb --fsys-tarfile ${PMS_DOWNLOAD_NAME} | tar -xf - -C "${PMS_LIB_DIR}/" --strip-components=4 ./apps/plexmediaserver-annapurna/Binaries
+
+        # remove not used files
+        rm "${PMS_LIB_DIR}/config.xml"
 
         # remove tmp data
         cd /tmp
