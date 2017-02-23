@@ -4,9 +4,9 @@ PMS_LIB_DIR=/usr/lib/plexmediaserver
 PMS_DOWNLOAD_DIR=/tmp/plex_tmp_download
 PMS_DOWNLOAD_NAME="plexmediaserver.deb"
 
-VERSION="1.3.3.3148-b38628e"
+VERSION="1.3.4.3285-b46e0ea"
 PMS_URL="https://downloads.plex.tv/plex-media-server/${VERSION}/plexmediaserver-ros6-binaries-annapurna_${VERSION}_armel.deb"
-PMS_HASH="ece8e6aa07908255fb49990623d6f2f57973362b"
+PMS_HASH="ec444ea669b5fb9ff119dc1f49daf337861248e9"
 
 case "$1" in
     configure)
