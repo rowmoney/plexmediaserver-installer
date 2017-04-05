@@ -1,3 +1,9 @@
+plexmediaserver-installer (1.5.3.3580-4b377d295-1~jessie) stable; urgency=low
+
+  * Version 1.5.3.3580-4b377d295
+
+ -- OpenMediaVault Plugin Developers <plugins@omv-extras.org>  Wed, 05 Apr 2017 12:36:01 -0500
+
 plexmediaserver-installer (1.3.4.3285-b46e0ea-1~jessie) stable; urgency=low
 
   * Version 1.3.4.3285-b46e0ea
