@@ -1,0 +1,25 @@
+pipeline:
+  build:
+    image: debian:stretch
+    commands:
+    - dpkg-deb --build . ./
+
+  deploy:
+    image: debian:stretch
+    commands:
+    - "export NAME=$(ls -1 plexmediaserver-installer_*.deb)"
+    - "export VERSION=$(dpkg -I plexmediaserver-installer_*.deb | grep Version: | awk '{print $2}')"
+    - "export GITHUB_USER=$DRONE_REPO_OWNER"
+    - "export GITHUB_REPO=$DRONE_REPO_NAME"
+    - apt-get update -y -qqq
+    - apt-get install -y -qqq wget bzip2
+    - wget -c https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2
+    - tar -C /tmp -jxf linux-amd64-github-release.tar.bz2
+    - mv /tmp/bin/linux/amd64/github-release /usr/local/bin/
+    - 'github-release release --tag "$VERSION" --name "$VERSION: $NAME" --description "$VERSION" --draft || true'
+    - 'github-release upload --tag "$VERSION" --name "$NAME" --file "$NAME"'
+    - 'github-release edit --tag "$VERSION" --name "$VERSION: $NAME" --description "$VERSION"'
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    when:
+      branch: master
