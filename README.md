@@ -7,8 +7,8 @@ This project can be used to generate a hacky, non-standard compliant Debian pack
 ## What do I have to do?
 
 1. Clone the repo
-2. Create a clean working copy, like: `mkdir ../1.8.4-installer; git archive master | tar -x -C ../1.8.4-installer/`
-3. Build the package: `cd ..; fakeroot dpkg-deb --build 1.8.4-installer ./`
+2. Create a clean working copy, like: `mkdir ../1.11.3-installer; git archive master | tar -x -C ../1.11.3-installer/`
+3. Build the package: `cd ..; fakeroot dpkg-deb --build 1.11.3-installer ./`
 
 ## How do I build a package for version X.Y.Z?
 
